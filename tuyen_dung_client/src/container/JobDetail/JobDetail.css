@@ -1,0 +1,10 @@
+.disabled-button {
+    background-color: transparent; /* Nền trong suốt */
+    color: #ff3366; /* Màu chữ */
+    border: none; /* Không có viền */
+    pointer-events: none; /* Không cho phép bấm */
+    cursor: default; /* Con trỏ mặc định */
+    text-align: center; /* Căn giữa */
+    font-weight: bold; /* Chữ đậm */
+    padding: 10px 20px; /* Khoảng cách bên trong */
+  }
