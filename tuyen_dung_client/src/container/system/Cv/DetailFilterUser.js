@@ -54,11 +54,7 @@ const DetailFilterUser = () => {
                 })
                 if (check.data.errCode ===0 ) {
                     let user = await getDetailUserById(id)
-                    console.log(user);
-                    
                     if (user && user.code === 200) {
-                        console.log(user);
-                        
                         setStateUser(user.result)
                     }
                 } else {

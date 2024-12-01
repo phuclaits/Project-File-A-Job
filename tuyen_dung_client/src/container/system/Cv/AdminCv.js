@@ -22,8 +22,6 @@ const AdminCv = () => {
     },
   });
   useEffect(() => {
-    console.log("param", url);
-    console.log(params.id);
     if (params.id) {
       let fetchCV = async () => {
 

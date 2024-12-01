@@ -24,21 +24,26 @@ const Register = () => {
     password: "",
     isOpen: false,
     dataUser: {},
-    roleCode: "",
+    roleCode: "CANDIDATE",
     email: "",
     againPass: "",
-    genderCode: "",
-    images : ""
+    genderCode: "FE",
+    images: "",
   });
   console.log(inputValues);
   const [dataCodeRole, setDataCodeRole] = useState([]);
   const [dataCodeGender, setDataCodeGender] = useState([]);
-  
+
   useEffect(() => {
     const token = localStorage.getItem("token_user");
     if (token) {
       const userData = JSON.parse(localStorage.getItem("userData"));
-      if (userData && (userData.codeRoleAccount === "ADMIN" || userData.codeRoleAccount === "EMPLOYER" || userData.codeRoleAccount === "COMPANY")) {
+      if (
+        userData &&
+        (userData.codeRoleAccount === "ADMIN" ||
+          userData.codeRoleAccount === "EMPLOYER" ||
+          userData.codeRoleAccount === "COMPANY")
+      ) {
         history.push("/admin");
       } else {
         history.push("/");
@@ -84,10 +89,7 @@ const Register = () => {
 
   const handleOnChange = (event) => {
     const { name, value } = event.target;
-    setInputValues({ ...inputValues,...{[name]: value}} );
-
-    
-    
+    setInputValues({ ...inputValues, ...{ [name]: value } });
   };
 
   let handleOpenVerifyOTP = async () => {
@@ -121,9 +123,12 @@ const Register = () => {
     }
 
     axios
-      .get("http://localhost:8080/app-tuyen-dung/api/v1/user/check-phonenumber-user", {
-        params: { phonenumber: inputValues.phonenumber },
-      })
+      .get(
+        "http://localhost:8080/app-tuyen-dung/api/v1/user/check-phonenumber-user",
+        {
+          params: { phonenumber: inputValues.phonenumber },
+        }
+      )
       .then((res) => {
         console.log(res);
         if (res.data === true) {
@@ -140,7 +145,7 @@ const Register = () => {
               email: inputValues.email,
               genderCode: inputValues.genderCode,
               image:
-              "https://inkythuatso.com/uploads/thumbnails/800/2023/03/6-anh-dai-dien-trang-inkythuatso-03-15-26-36.jpg"
+                "https://inkythuatso.com/uploads/thumbnails/800/2023/03/6-anh-dai-dien-trang-inkythuatso-03-15-26-36.jpg",
             },
             ["isOpen"]: true,
           });
@@ -201,7 +206,7 @@ const Register = () => {
                       </div>
                       <div className="form-group">
                         <input
-                          type="text"
+                          type="number"
                           value={inputValues.phonenumber}
                           name="phonenumber"
                           onChange={(event) => handleOnChange(event)}
@@ -217,7 +222,7 @@ const Register = () => {
                       </div>
                       <div className="form-group">
                         <input
-                          type="email"
+                          type="text"
                           value={inputValues.email}
                           name="email"
                           onChange={(event) => handleOnChange(event)}
@@ -269,7 +274,7 @@ const Register = () => {
                         >
                           {dataCodeRole &&
                             dataCodeRole.length > 0 &&
-                            filteredDataCodeRole.map((item, index) => {
+                            dataCodeRole.map((item, index) => {
                               if (
                                 item.code !== "ADMIN" &&
                                 item.code !== "COMPANY"
@@ -281,12 +286,6 @@ const Register = () => {
                                 );
                               }
                             })}
-                          {/* <option key={"ADMIN"} value={"ADMIN"}>
-                            ADMIN
-                          </option>
-                          <option key={"COMPANY"} value={"COMPANY"}>
-                            COMPANY
-                          </option> */}
                         </select>
                       </div>
                       <div className="form-group">
@@ -306,19 +305,11 @@ const Register = () => {
                                 </option>
                               );
                             })}
-                          {/* <option key={"NAM"} value={"NAM"}>
-                            NAM
-                          </option>
-                          <option key={"NỮ"} value={"NỮ"}>
-                            NỮ
-                          </option> */}
                         </select>
                       </div>
                       <div className="mt-3">
                         <a
-                          onClick={() => {
-                            handleOpenVerifyOTP();
-                          }}
+                          onClick={() => handleOpenVerifyOTP()}
                           className="btn1 btn1-block btn1-primary1 btn1-lg font-weight-medium auth-form-btn1"
                         >
                           Đăng ký

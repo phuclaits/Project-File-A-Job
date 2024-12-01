@@ -196,6 +196,9 @@ const checkUserPhoneService = (phonenumber) => {
 const changePasswordByphone = (data) => {
   return axios.post(`/app-tuyen-dung/api/v1/account/change-password`, data);
 };
+export const changePasswordByphoneForgotPass = (data) => {
+  return axios.post(`/app-tuyen-dung/api/v1/account/change-forgot-password`, data);
+};
 const handleChangePassword = (data) => {
   return axios.post(`/app-tuyen-dung/api/v1/account/change-password`, data);
 };

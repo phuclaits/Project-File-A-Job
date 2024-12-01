@@ -124,7 +124,6 @@ public class CompanyController {
     }
 
     @GetMapping("/get_post_times/{companyID}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ApiResponse<List<PostResponse>> getPostTimes(@PathVariable int companyID) {
         ApiResponse<List<PostResponse>> apiResponse = new ApiResponse<>();
         CompanyResponse companyResponse = companyService.getCompanyByID(companyID);

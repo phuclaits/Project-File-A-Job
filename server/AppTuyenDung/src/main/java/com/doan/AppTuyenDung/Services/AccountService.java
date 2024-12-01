@@ -141,6 +141,25 @@ public class AccountService {
         return response;
     }
 
+    public Map<String, Object> changePasswordForgotPassByPhone(String phoneNumber, String newPassword) {
+        Map<String, Object> response = new HashMap<>();
+
+        Account account = accountRepository.findByPhonenumber(phoneNumber);
+        if (account != null) {
+            account.setPassword(passwordEncoder.encode(newPassword));
+            accountRepository.save(account);
+            response.put("errCode", 0);
+            response.put("errMessage", "Mật khẩu đã được cập nhật thành công");
+
+        } else {
+            // Nếu tài khoản không tồn tại
+            response.put("errCode", 1);
+            response.put("errMessage", "Số điện thoại không tồn tại");
+        }
+
+        return response;
+    }
+
     // get list user => role ADMIN => /admin/list-user
     @Autowired
     private AccountPagingAndSorting accountPagingAndSorting;;

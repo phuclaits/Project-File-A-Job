@@ -147,6 +147,14 @@ const AddPost = () => {
                 toast.error("Ngày kết thúc phải hơn ngày hiện tại")
             }
             else {
+                if(inputValues.name === ""||inputValues.descriptionHTML === ""||inputValues.descriptionMarkdown === "" || 
+                    inputValues.categoryJobCode === "" || inputValues.addressCode === "" || inputValues.salaryJobCode === "" ||
+                    inputValues.categoryJoblevelCode === "" || inputValues.categoryWorktypeCode === "" ||
+                    inputValues.experienceJobCode === "" || inputValues.genderCode === "" || inputValues.amount === ""){
+                        setIsLoading(false)
+                        toast.error("Vui lòng nhập đầy đủ thông tin")
+                        return;
+                    }
                 let res = await createPostService({
                     name: inputValues.name,
                     descriptionHTML: inputValues.descriptionHTML,

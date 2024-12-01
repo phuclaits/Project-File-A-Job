@@ -64,6 +64,11 @@ const AddExpType = () => {
     let handleSaveExpType = async () => {
         setIsLoading(true)
         if (isActionADD === true) {
+            if (inputValues.value === '' || inputValues.code === '') {
+                setIsLoading(false)
+                toast.error('Vui lòng nhập đầy đủ thông tin')
+                return
+            }
             let res = await createExpType({
                 image: '',
                 value: inputValues.value,

@@ -104,6 +104,12 @@ const UserInfo = () => {
     }
     let handleSaveUser = async () => {
         setIsLoading(true)
+        if(inputValues.firstName === '' || inputValues.lastName === '' || inputValues.address === '' || inputValues.email === ''||inputValues.dob === '' 
+            || inputValues.genderCode === '' || inputValues.genderCode === '' || inputValues.image === ''){
+            setIsLoading(false)
+            toast.error("Vui lòng nhập đầy đủ thông tin");
+            return;
+        }
         let formData = new FormData();
         console.log("123");
         // Append the fields to the FormData object
@@ -117,12 +123,11 @@ const UserInfo = () => {
         // Handle the date
         formData.append('dob', isChangeDate === false ? inputValues.dob : new Date(birthday).getTime());    
         formData.append('email', inputValues.email);
-        console.log(inputValues.imageReview)
+
         if (inputValues.image.startsWith("data:image/jpeg;base64,") || inputValues.image.startsWith("data:image/png;base64,")) {
           const blob = base64ToBlob(inputValues.image, 'image/jpeg');
           formData.append("fileImage", blob, "image.jpg");
         }else{
-          console.log(inputValues.imageReview)
           formData.append("image", inputValues.imageReview); 
         }
         let res = await UpdateUserService(formData);

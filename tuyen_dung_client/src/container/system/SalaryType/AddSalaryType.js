@@ -63,6 +63,11 @@ const AddSalaryType = () => {
     let handleSaveSalaryType = async () => {
         setIsLoading(true)
         if (isActionADD === true) {
+            if (inputValues.value === '' || inputValues.code === '') {
+                setIsLoading(false)
+                toast.error('Vui lòng nhập đầy đủ thông tin')
+                return
+            }
             let res = await createSalaryType({
                 value: inputValues.value,
                 code: inputValues.code,

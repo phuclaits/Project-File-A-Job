@@ -85,6 +85,12 @@ const AddUser = () => {
     }
     let handleSaveUser = async () => {
         setIsLoading(true)
+        if(inputValues.firstName === '' || inputValues.lastName === '' || inputValues.address === '' || inputValues.phonenumber === ''
+            || inputValues.email === '' || inputValues.genderCode === '' || inputValues.roleCode === ''){
+            setIsLoading(false)
+            toast.error('Vui lòng nhập đầy đủ thông tin')
+            return;
+            }
         if (isActionADD === true) {
             let params = {
                 email : inputValues.email,

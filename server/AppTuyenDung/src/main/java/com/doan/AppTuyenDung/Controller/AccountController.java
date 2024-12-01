@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cloudinary.Api;
 import com.doan.AppTuyenDung.DTO.GetAllUserAdmin.AccountDTO;
 import com.doan.AppTuyenDung.DTO.GetAllUserAdmin.CustomResponse;
+import com.doan.AppTuyenDung.DTO.Request.ChangePasswordForgotPassword;
 import com.doan.AppTuyenDung.DTO.Request.ChangePasswordRequest;
 import com.doan.AppTuyenDung.DTO.Response.ApiResponse;
 import com.doan.AppTuyenDung.Repositories.AccountRepository;
@@ -52,6 +53,11 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
+	@PostMapping("account/change-forgot-password")
+    public ResponseEntity<Map<String, Object>> changePasswordByPhone(@RequestBody ChangePasswordForgotPassword data) {
+        Map<String, Object> response = accountService.changePasswordForgotPassByPhone(data.getPhonenumber() ,data.getNewPassword());
+        return ResponseEntity.ok(response);
+    }
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	@GetMapping("/user/users")

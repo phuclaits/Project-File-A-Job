@@ -40,6 +40,11 @@ const AddpackagePost = () => {
     let handleSavePackagePost = async () => {
         setIsLoading(true)
         if (isActionADD === true) {
+            if(inputValues.value === '' || inputValues.price === '' || inputValues.name === ''|| inputValues.isHot === ''){
+                setIsLoading(false)
+                toast.error('Vui lòng nhập đầy đủ thông tin')
+                return 
+            }
             let res = await createPackagePost({
                 value: inputValues.value,
                 isHot: inputValues.isHot,

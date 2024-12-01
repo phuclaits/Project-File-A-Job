@@ -31,6 +31,7 @@ import com.doan.AppTuyenDung.entity.CodeJobType;
 import com.doan.AppTuyenDung.entity.CodeProvince;
 import com.doan.AppTuyenDung.entity.CodeRule;
 import com.doan.AppTuyenDung.entity.CodeSalaryType;
+import com.doan.AppTuyenDung.entity.CodeStatus;
 
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,7 @@ import com.doan.AppTuyenDung.Repositories.AllCode.CodeExpTypeRepository;
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeJobTypeRepository;
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeProvinceRepository;
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeSalaryTypeRepository;
+import com.doan.AppTuyenDung.Repositories.AllCode.CodeStatusRepository;
 import com.doan.AppTuyenDung.Repositories.Specification.UserSpecification;
 import com.doan.AppTuyenDung.Services.Notification.UserService;
 import com.doan.AppTuyenDung.entity.User;
@@ -97,7 +99,8 @@ public class UserManagermentService {
     private CloudinaryService cloudinaryService;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private CodeStatusRepository codeStatusRepository;
 	public ReqRes register(ReqRes registrationRequest) {
 		ReqRes resp = new ReqRes();
 
@@ -120,6 +123,7 @@ public class UserManagermentService {
             user.setEmail(registrationRequest.getEmail());
             user.setImage(registrationRequest.getImage());
             user.setGenderCode(gender);
+            user.setImage("https://i.pinimg.com/1200x/bc/43/98/bc439871417621836a0eeea768d60944.jpg");
             User UserResult = usersRepo.save(user);
             if (user!=null) {
                 com.doan.AppTuyenDung.ModelFirebase.User uFirease = new com.doan.AppTuyenDung.ModelFirebase.User();
@@ -133,6 +137,10 @@ public class UserManagermentService {
                 account.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
                 account.setRoleCode(rule);
                 account.setUser(user);
+                CodeStatus codeStatus = codeStatusRepository.findByCode("S1");
+                account.setStatusCode(codeStatus);
+                account.setCreatedAt(new Date());
+                account.setUpdatedAt(new Date());
                 Account accountResult = accountRepo.save(account);
                 if (account.getId()>0) {
                     resp.setUser(UserResult);

@@ -19,8 +19,6 @@ const AddPackageMatchCv = () => {
   const param = url.pathname.endsWith("/")
   ? url.pathname.slice(0, -1).split("/").pop() 
   : url.pathname.split("/").pop();
-  console.log(url)
-  console.log(param);
   const [inputValues, setInputValues] = useState({
     value: "",
     price: "",
@@ -55,6 +53,11 @@ const AddPackageMatchCv = () => {
   let handleSavePackageCv = async () => {
     setIsLoading(true);
     if (isActionADD === true) {
+      if(inputValues.value === '' || inputValues.price === '' || inputValues.name === ''){
+        setIsLoading(false);
+        toast.error("Vui lòng nhập đầy đủ thông tin");
+        return;
+      }
       let res = await createPackageCv({
         value: inputValues.value,
         name: inputValues.name,

@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import handleValidate from '../utils/Validation';
-import { checkUserPhoneService, changePasswordByphone, handleLoginService } from '../../service/userService';
+import { checkUserPhoneService, changePasswordByphoneForgotPass, handleLoginService } from '../../service/userService';
 import { Link } from 'react-router-dom';
 import OtpForgetPassword from './OtpForgetPassword';
 import axios from 'axios';
@@ -29,7 +29,9 @@ const ForgetPassword = () => {
             })
             return
         }
+        console.log(inputValues.phonenumber);
         let res = await checkUserPhoneService(inputValues.phonenumber)
+        console.log(res);
         if (res === true) {
             setInputValues({ ...inputValues, ["isOpen"]: true })
         } else {
@@ -38,6 +40,94 @@ const ForgetPassword = () => {
                 phonenumber: true
             })
             toast.error("Số điện thoại không tồn tại!")
+        }
+
+    }
+    const recieveVerify = (success) => {
+        setInputValues({ ...inputValues, ["isOpen"]: false, ["isSuccess"]: true })
+    }
+    let handleLogin = async (phonenumber, password) => 
+    {
+        let paramsLogin = {
+          phonenumber: phonenumber,
+          password: password,
+        };
+        axios
+          .post("http://localhost:8080/app-tuyen-dung/api/v1/auth/login", paramsLogin)
+          .then((res) => {
+        if (res.data.statusCode === 200) {
+          console.log(res.data);
+          localStorage.setItem("token_user", res.data.token);
+          const token = localStorage.getItem("token_user");
+          console.log(`token:  ${token}`);
+          axios
+            .post(
+              "http://localhost:8080/app-tuyen-dung/api/v1/user/get-info",
+              {},
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            )
+            .then((response) => {
+              if (response.data && response.data.length > 0) {
+                const userData = response.data[0]; // Lấy object đầu tiên trong mảng
+                localStorage.setItem("userData", JSON.stringify(userData));
+                // console.log("User data saved to localStorage:", userData.codeRoleAccount);
+                // Chuyển hướng sau khi lưu
+                if (
+                  res.data.roleCode === "ADMIN" ||
+                  res.data.roleCode === "EMPLOYER" ||
+                  res.data.roleCode === "COMPANY")
+                  {
+                    toast.success("Đăng nhập thành công ");
+                    window.location.href = "/admin/";
+                    
+                  }
+                else {
+                  const lastUrl = localStorage.getItem("lastUrl");
+                  if (lastUrl) {
+                    localStorage.removeItem("lastUrl");
+                    window.location.href = lastUrl;
+                  } else {
+                    window.location.href = "/";
+                  }
+                }
+              } else {
+                console.log("No user data found.");
+              }
+            });
+        } else {
+          toast.error("Đăng nhập thất bại");
+        }});
+    };
+    let handleForgetPassword = async () => {
+        let checkNewPass = handleValidate(inputValues.newPassword, "password")
+        if (!(checkNewPass === true)) {
+            setValidates({
+                ...inputValidates,
+                newPassword: checkNewPass
+            })
+            if (inputValues.confirmPassword !== inputValues.newPassword) {
+                setValidates({
+                    ...inputValidates,
+                    confirmPassword: "Mật khẩu nhập lại không trùng"
+                })
+                return
+            }
+            return
+        }
+        let res = await changePasswordByphoneForgotPass({
+
+            phonenumber: inputValues.phonenumber,
+            newPassword: inputValues.newPassword,
+        })
+        if (res && res.errCode === 0) {
+            toast.success("Đổi mật khẩu thành công")
+            handleLogin(inputValues.phonenumber, inputValues.newPassword)
+        } else {
+            toast.error(res.errMessage)
         }
 
     }
@@ -58,13 +148,33 @@ const ForgetPassword = () => {
                                         <h4>Quên mật khẩu?</h4>
                                         <h6 className="font-weight-light">Đừng lo! Khôi phục trong vài giây</h6>
                                         <form className="pt-3">
-                                            <div className="form-group">
-                                                <input type="text" value={inputValues.phonenumber} name="phonenumber" onChange={(event) => handleOnChange(event)} className="form-control form-control-lg" id="exampleInputEmail1" placeholder="Số điện thoại" />
-                                                {inputValidates.phonenumber && <p style={{ color: 'red' }}>{inputValidates.phonenumber}</p>}
-                                            </div>
-                                            <div className="mt-3">
-                                                <a onClick={() => handleOpenVerifyOTP() } className="btn1 btn1-block btn1-primary1 btn1-lg font-weight-medium auth-form-btn1" >Xác nhận</a>
-                                            </div>
+
+                                            {inputValues.isSuccess === true &&
+                                                <>
+                                                    <div className="form-group">
+                                                        <input type="password" value={inputValues.newPassword} name="newPassword" onChange={(event) => handleOnChange(event)} className="form-control form-control-lg" id="exampleInputPassword1" placeholder="Mật khẩu mới" />
+                                                        {inputValidates.newPassword && <p style={{ color: 'red' }}>{inputValidates.newPassword}</p>}
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <input type="password" value={inputValues.confirmPassword} name="confirmPassword" onChange={(event) => handleOnChange(event)} className="form-control form-control-lg" id="exampleInputPassword1" placeholder="Xác nhận mật khẩu" />
+                                                        {inputValidates.confirmPassword && <p style={{ color: 'red' }}>{inputValidates.confirmPassword}</p>}
+                                                    </div>
+                                                    <div className="mt-3">
+                                                        <a onClick={() => handleForgetPassword()} className="btn1 btn1-block btn1-primary1 btn1-lg font-weight-medium auth-form-btn1" >Xác nhận</a>
+                                                    </div>
+                                                </>
+                                            }
+                                            {inputValues.isSuccess === false &&
+                                                <>
+                                                    <div className="form-group">
+                                                        <input type="number" value={inputValues.phonenumber} name="phonenumber" onChange={(event) => handleOnChange(event)} className="form-control form-control-lg" id="exampleInputEmail1" placeholder="Số điện thoại" />
+                                                        {inputValidates.phonenumber && <p style={{ color: 'red' }}>{inputValidates.phonenumber}</p>}
+                                                    </div>
+                                                    <div className="mt-3">
+                                                        <a onClick={() => handleOpenVerifyOTP()} className="btn1 btn1-block btn1-primary1 btn1-lg font-weight-medium auth-form-btn1" >Xác nhận</a>
+                                                    </div>
+                                                </>
+                                            }
                                             <div className="text-center mt-4 font-weight-light">
                                                 Chưa có tài khoản? <Link to="/register" className="text-primary">Đăng ký</Link>
                                                 <br></br>
@@ -80,7 +190,7 @@ const ForgetPassword = () => {
                 </div>
             }
             {inputValues.isOpen === true &&
-                <OtpForgetPassword dataUser={inputValues.phonenumber} />
+                <OtpForgetPassword dataUser={inputValues.phonenumber} recieveVerify={recieveVerify} />
             }
         </>
     )
