@@ -66,6 +66,11 @@ const Otp = (props) => {
     }
   };
   let submitOTP = async () => {
+
+    if(inputValues.so1 ===''||inputValues.so2 ===''||inputValues.so3 ===''||inputValues.so4 ===''||inputValues.so5 ===''||inputValues.so6 ===''){
+      toast.error("Vui lòng nhập đầy đủ mã OTP !");
+      return;
+    }
     const code = +(
       inputValues.so1 +
       inputValues.so2 +

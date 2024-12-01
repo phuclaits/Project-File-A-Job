@@ -93,6 +93,10 @@ const Register = () => {
   };
 
   let handleOpenVerifyOTP = async () => {
+    if(inputValues.password ==='' || inputValues.phonenumber ==='' || inputValues.firstName ==='' || inputValues.lastName ==='' || inputValues.email ===''){
+      toast.error("Vui lòng nhập đầy đủ thông tin !")
+      return;
+    }
     let checkPhonenumber = handleValidate(inputValues.phonenumber, "phone");
     let checkPassword = handleValidate(inputValues.password, "password");
     let checkFirstName = handleValidate(inputValues.firstName, "isEmpty");

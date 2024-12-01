@@ -49,7 +49,7 @@ function SendCV(props){
     const radioOnChange = (e) => {
         const {value} = e.target
         if (value==='userCv' && !inputValue.linkFileUser) {
-            toast.error('Hiện chưa đăng CV online cho chúng tôi')
+            toast.error('Hiện bạn chưa cập nhật CV online của mình')
         }
         else {
             setTypeCv(value)
