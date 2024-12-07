@@ -311,5 +311,12 @@ public class UserManagementController {
         	throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
 		}
     }
+    @PostMapping("/user/ForgotPasswordMobile")
+    public ResponseEntity<Map<String, Object>> handleForgotPasswordMobile(@RequestBody Map<String, String> requestBody) {
+        String phoneNumber = requestBody.get("phoneNumber");
+        Map<String, Object> result = usersManagementService.handleForgotPasswordMobile(phoneNumber);
+        return ResponseEntity.ok(result);
+    }
+    //"{"phoneNumber":"0374852925"}"
     
 }

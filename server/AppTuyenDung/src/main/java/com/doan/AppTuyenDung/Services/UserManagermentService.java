@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -50,6 +51,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 import com.doan.AppTuyenDung.DTO.CloudinaryResponse;
+import com.doan.AppTuyenDung.DTO.CreateUserByEmployeerDTO;
 import com.doan.AppTuyenDung.DTO.InfoPostDetailDto;
 import com.doan.AppTuyenDung.DTO.UserAccountDTO;
 import com.doan.AppTuyenDung.Repositories.UserRepository;
@@ -102,6 +104,8 @@ public class UserManagermentService {
     private UserService userService;
     @Autowired
     private CodeStatusRepository codeStatusRepository;
+    @Autowired
+    private EmailService emailService;
 	public ReqRes register(ReqRes registrationRequest) {
 		ReqRes resp = new ReqRes();
 
@@ -627,5 +631,34 @@ public class UserManagermentService {
     		 }
     	 }
     	 return count;
+    }
+
+
+    public Map<String, Object> handleForgotPasswordMobile(String phoneNumber ) {
+        Map<String, Object> response = new HashMap<>();
+        if(phoneNumber == null) {
+            response.put("error", "1");
+            response.put("errorMessage", "Missing required parameters!");
+            return response;
+        }
+        Account account = accountRepo.findByPhonenumber(phoneNumber);
+        if(account == null) {
+            response.put("error", "1");
+            response.put("errorMessage", "Phone number is not exist!");
+            return response;
+        }
+        else{
+            String newPass = String.valueOf(System.currentTimeMillis());
+            account.setPassword(passwordEncoder.encode(newPass));
+            accountRepo.save(account);
+            String email = account.getUser().getEmail();
+            String note = "Đã lấy lại mật khẩu thành công  \n " +
+                              "Tài khoản: " + phoneNumber + "\n " +
+                              "Mật khẩu: " + newPass +"\n Cảm ơn bạn đã dành thời gian liên hệ với chúng tôi!";
+                emailService.sendSimpleEmail(email, "Đã lấy lại mật khẩu thành công", note);
+            response.put("error", "0");
+            response.put("errorMessage", "Đã gửi mật khẩu mới qua email của bạn!");
+            return response;
+        }
     }
 }
