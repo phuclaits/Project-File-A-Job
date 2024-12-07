@@ -3,6 +3,7 @@ package com.doan.AppTuyenDung.Services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.Iterator;
 
 import com.doan.AppTuyenDung.entity.Account;
 import com.doan.AppTuyenDung.DTO.CvDTO;
+import com.doan.AppTuyenDung.DTO.CvMobiDTO;
 import com.doan.AppTuyenDung.DTO.CvsDTO;
 import com.doan.AppTuyenDung.DTO.FilterRequest;
 import com.doan.AppTuyenDung.DTO.GetListCVByPost;
@@ -185,6 +187,65 @@ public class CvService {
         }
         return response;
     }
+
+
+	//// su ly mobi
+	public Map<String, Object> handleCreateCvMobile(CvMobiDTO data) {
+		Map<String, Object> response = new HashMap<>();
+
+		User user = userRepository.findById(data.getUserId()).orElse(null);
+		if (user == null) {
+			response.put("errCode", -1);
+			response.put("errMessage", "User not found!");
+			return response;
+		}
+
+		Post post = postRepository.findById(data.getPostId()).orElse(null);
+		if (post == null) {
+			response.put("errCode", -1);
+			response.put("errMessage", "Post not found!");
+			return response;
+		}
+
+		if (data.getUserId() == null || data.getPostId() == null) {
+			response.put("errCode", 1);
+			response.put("errMessage", "Missing required parameters!");
+			return response;
+		}
+
+		if (data.getFileBase64() == null || data.getFileBase64().isEmpty()) {
+			response.put("errCode", 2);
+			response.put("errMessage", "Missing fileBase64!");
+			return response;
+		}
+
+		try {
+
+			Cv cv = new Cv();
+			cv.setUser(user);
+			cv.setFile(data.getFile());
+			cv.setPost(post);
+			cv.setCreatedAt(new Date());
+			cv.setStatus("pending");
+			cv.setIsChecked(false);
+			cv.setDescription(data.getDescription());
+
+			Cv savedCv = cvRepository.save(cv);
+
+			if (savedCv != null) {
+				response.put("errCode", 0);
+				response.put("errMessage", "Đã gửi CV thành công");
+			} else {
+				response.put("errCode", 2);
+				response.put("errMessage", "Đã gửi CV thất bại");
+			}
+		} catch (IllegalArgumentException e) {
+			response.put("errCode", 3);
+			response.put("errMessage", "Lỗi khi giải mã fileBase64: " + e.getMessage());
+		}
+
+		return response;
+	}
 
 
 

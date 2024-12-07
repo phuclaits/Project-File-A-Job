@@ -50,9 +50,10 @@ const ManageCvCandidate = (props) => {
             userId: user.id
 
         })
+
         if (arrData && arrData.data.code === 200) {
-            setdataCv(arrData.data.content)
-        
+            setdataCv(arrData.data.result.content)
+            // setCount(Math.ceil(arrData.data.result.totalElements / PAGINATION.pagerow))
         }
     }
 

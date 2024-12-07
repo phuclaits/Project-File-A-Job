@@ -13,3 +13,4 @@ public class AppTuyenDungApplication {
 		SpringApplication.run(AppTuyenDungApplication.class, args);
 	}
 }
+//lay dia chi ip thay vo lai

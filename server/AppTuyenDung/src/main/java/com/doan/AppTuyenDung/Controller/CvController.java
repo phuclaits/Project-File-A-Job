@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.doan.AppTuyenDung.DTO.CvDTO;
+import com.doan.AppTuyenDung.DTO.CvMobiDTO;
 import com.doan.AppTuyenDung.DTO.FilterRequest;
 import com.doan.AppTuyenDung.DTO.Response.ApiResponse;
 import com.doan.AppTuyenDung.DTO.Response.CvByPostResponse;
@@ -94,6 +95,48 @@ public class CvController {
         Map<String, Object> response = cvService.handleCreateCv(cvs);
         return ResponseEntity.ok(response);
 	}
+
+    @PostMapping("/createCVmobi")
+    @PreAuthorize("hasAnyAuthority('CANDIDATE')")
+    public ResponseEntity<Map<String, Object>> createCVNew(
+            @RequestHeader("Authorization") String token,
+            @RequestBody CvMobiDTO cvs) {
+        Map<String, Object> responseError = new HashMap<>();
+
+        if (cvs.getFileBase64() == null || cvs.getFileBase64().isEmpty()) {
+            responseError.put("errCode", -1);
+            responseError.put("errMessage", "Cần bổ sung File PDF Cv");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseError);
+        }
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
+
+        String phonenumber = jwtUtils.extractUserName(token);
+        var account = accountRepo.findByPhonenumber(phonenumber);
+        if (account == null) {
+            responseError.put("errCode", -1);
+            responseError.put("errMessage", "Tài khoản không tồn tại");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseError);
+        }
+
+        try {
+            if (cvs.getFileBase64() != null && !cvs.getFileBase64().isEmpty() &&
+                cvs.getFileBase64().startsWith("data:application/pdf;base64,")) {
+                cvs.setFile(cvs.getFileBase64().getBytes());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseError.put("errCode", -2);
+            responseError.put("errMessage", "Lỗi xử lý file PDF");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseError);
+        }
+
+        Map<String, Object> response = cvService.handleCreateCvMobile(cvs);
+        return ResponseEntity.ok(response);
+    }
 
 	@GetMapping("/getAllListByPost")
 	public CompletableFuture<ResponseEntity<Map<String, Object>>> getAllListCvByPost(

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.doan.AppTuyenDung.DTO.Request.ProfileUserRequest;
 import com.doan.AppTuyenDung.DTO.Request.ReqRes;
 import com.doan.AppTuyenDung.DTO.Request.UserSettingDTO;
+import com.doan.AppTuyenDung.DTO.Request.UserSettingMobiDTO;
 import com.doan.AppTuyenDung.DTO.Request.UserUpdateRequest;
 import com.doan.AppTuyenDung.DTO.Response.AccountResponse;
 import com.doan.AppTuyenDung.DTO.Response.CodeResponse;
@@ -388,6 +389,28 @@ public class UserManagermentService {
 	    return "Hệ thống đã ghi nhận lựa chọn";
 	}
 
+    @Transactional
+    public ResponseEntity<String> setDataUserSettingMobi(UserSettingMobiDTO data) {
+        try {
+            if (data.getIdUser() == null) {
+                return ResponseEntity.badRequest().body("Thiếu tham số yêu cầu!");
+            }
+    
+            User user = usersRepo.findById(data.getIdUser()).orElse(null);
+            if (user == null) {
+                return ResponseEntity.badRequest().body("Không tồn tại người dùng này");
+            }
+    
+            createOrUpdateUserSettingMobi(data, user);
+    
+            return ResponseEntity.ok("Hệ thống đã ghi nhận lựa chọn");
+    
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok("Lỗi hệ thống");
+        }
+    }    
+
 	private void createOrUpdateUserSetting(UserSettingDTO data, User user) {
 	    UserSetting userSetting = userSettingRepository.findByUserId(user.getId());
 	    if (userSetting == null) {
@@ -408,6 +431,32 @@ public class UserManagermentService {
 
 	    userSettingRepository.save(userSetting);
 	}
+    
+    private void createOrUpdateUserSettingMobi(UserSettingMobiDTO data, User user) {
+        UserSetting userSetting = userSettingRepository.findByUserId(user.getId());
+
+        if (userSetting == null) {
+            userSetting = new UserSetting();
+            userSetting.setUser(user);
+        }
+
+        CodeJobType categoryJobCode = codeJobTypeRepository.findByCode(data.getCategoryJobCode());
+        CodeSalaryType salaryJobCode = codeSalaryTypeRepository.findByCode(data.getSalaryJobCode());
+        CodeProvince addressCode = codeProvinceRepository.findByCode(data.getAddressCode());
+        CodeExpType experienceJobCode = codeExpTypeRepository.findByCode(data.getExperienceJobCode());
+        userSetting.setCategoryJobCode(categoryJobCode);
+        userSetting.setSalaryJobCode(salaryJobCode);
+        userSetting.setAddressCode(addressCode);
+        userSetting.setExperienceJobCode(experienceJobCode);
+
+        if (data.getFile() != null) {
+            userSetting.setFile(data.getFile());
+        }
+        userSetting.setIsTakeMail(data.getIsTakeMail());
+        userSetting.setIsFindJob(data.getIsFindJob());
+        userSettingRepository.save(userSetting);
+    }
+
     public Account getUserFromToken(String token) {
         String phonenumber = jwtUtils.extractUserName(token);
         return accountRepo.findByPhonenumber(phonenumber);

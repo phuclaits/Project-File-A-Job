@@ -187,7 +187,7 @@ const Otp = (props) => {
       <div className="container d-flex justify-content-center align-items-center container_Otp">
         <div className="card text-center">
           <div className="card-header p-5">
-            <img src="https://raw.githubusercontent.com/Rustcodeweb/OTP-Verification-Card-Design/main/mobile.png" />
+            <img src="/assets/img/logo.png" />
             <h5 style={{ color: "#fff" }} className="mb-2">
               XÁC THỰC OTP
             </h5>

@@ -2,7 +2,9 @@ package com.doan.AppTuyenDung.Controller;
 
 
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.doan.AppTuyenDung.DTO.Request.ReqRes;
 import com.doan.AppTuyenDung.DTO.Request.UserSettingDTO;
+import com.doan.AppTuyenDung.DTO.Request.UserSettingMobiDTO;
 import com.doan.AppTuyenDung.DTO.Request.UserUpdateRequest;
 import com.doan.AppTuyenDung.DTO.Response.AccountResponse;
 import com.doan.AppTuyenDung.DTO.Response.ApiResponse;
@@ -143,6 +146,55 @@ public class UserManagementController {
     	
     	apiRS.setMessage(usersManagementService.setDataUserSetting(data));
         return apiRS;
+    }
+
+// xu ly mobi
+
+    @PostMapping("/user/set-user-setting-mobi")
+    @PreAuthorize("hasAnyAuthority('CANDIDATE')")
+    public ResponseEntity<Map<String, Object>> setDataUserSetting(
+            @RequestHeader("Authorization") String token,
+            @RequestBody UserSettingMobiDTO data) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
+
+        String phonenumber = jwtUtils.extractUserName(token);
+        var account = accountRepo.findByPhonenumber(phonenumber);
+
+        if (account == null) {
+            response.put("errCode", -1);
+            response.put("errMessage", "Tài khoản không tồn tại");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            if (data.getFileBase64() != null && !data.getFileBase64().isEmpty() &&
+                    data.getFileBase64().startsWith("data:application/pdf;base64,")) {
+                data.setFile(data.getFileBase64().getBytes());
+            }
+
+            ResponseEntity<String> result = usersManagementService.setDataUserSettingMobi(data);
+
+            if (result.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+                response.put("errCode", -1);
+                response.put("errMessage", result.getBody());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            response.put("errCode", 0);
+            response.put("errMessage", result.getBody());
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("errCode", -3);
+            response.put("errMessage", "Lỗi xử lý dữ liệu");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
 
