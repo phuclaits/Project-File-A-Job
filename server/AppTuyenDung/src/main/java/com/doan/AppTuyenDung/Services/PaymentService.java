@@ -6,12 +6,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.doan.AppTuyenDung.DTO.PaymentOrderRequestCvDTO;
 import com.doan.AppTuyenDung.DTO.PaymentOrderRequestDTO;
-import com.doan.AppTuyenDung.DTO.PaymentRequestCvDTO;
-import com.doan.AppTuyenDung.DTO.PaymentRequestDto;
 import com.doan.AppTuyenDung.Repositories.CompanyRepository;
 import com.doan.AppTuyenDung.Repositories.OrderPackageCvRepository;
 import com.doan.AppTuyenDung.Repositories.OrderPackageRepository;
@@ -32,9 +29,8 @@ import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.PaymentExecution;
 import com.paypal.api.payments.RedirectUrls;
 import com.paypal.api.payments.Transaction;
-
-import com.paypal.base.rest.PayPalRESTException;
 import com.paypal.base.rest.APIContext;
+import com.paypal.base.rest.PayPalRESTException;
 @Service
 public class PaymentService {
     @Autowired
@@ -96,8 +92,8 @@ public class PaymentService {
             payer.setPaymentMethod("paypal");
 
             RedirectUrls redirectUrls = new RedirectUrls();
-            redirectUrls.setReturnUrl("http://localhost:3000" + "/admin/payment/success");
-            redirectUrls.setCancelUrl("http://localhost:3000" + "/admin/payment/cancel");
+            redirectUrls.setReturnUrl("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app" + "/admin/payment/success");
+            redirectUrls.setCancelUrl("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app" + "/admin/payment/cancel");
 
             Payment payment = new Payment();
             payment.setIntent("sale");
@@ -261,8 +257,8 @@ public class PaymentService {
             payer.setPaymentMethod("paypal");
 
             RedirectUrls redirectUrls = new RedirectUrls();
-            redirectUrls.setReturnUrl("http://localhost:3000" + "/admin/paymentCv/success");
-            redirectUrls.setCancelUrl("http://localhost:3000" + "/admin/paymentCv/cancel");
+            redirectUrls.setReturnUrl("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app" + "/admin/paymentCv/success");
+            redirectUrls.setCancelUrl("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app" + "/admin/paymentCv/cancel");
 
             Payment payment = new Payment();
             payment.setIntent("sale");

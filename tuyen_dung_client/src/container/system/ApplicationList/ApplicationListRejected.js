@@ -110,7 +110,7 @@ const ApplicationListRejected = () => {
             ))) : (
     <tr>
       <td colSpan="7" style={{ textAlign: "center" }}>
-        <p>Không có ứng viên nào được chấp nhận. Hãy kiểm tra Danh sách ứng tuyển mới <a href='http://localhost:3000/admin/list-candiate/'>Tại đây!</a></p>
+        <p>Không có ứng viên nào được chấp nhận. Hãy kiểm tra Danh sách ứng tuyển mới <a href='https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/list-candiate/'>Tại đây!</a></p>
       </td>
     </tr>
   )}

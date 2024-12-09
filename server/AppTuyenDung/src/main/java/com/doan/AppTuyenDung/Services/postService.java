@@ -1,9 +1,16 @@
 package com.doan.AppTuyenDung.Services;
 
-import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -11,20 +18,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-
+import com.doan.AppTuyenDung.DTO.AcceptPostByAdminDTO;
+import com.doan.AppTuyenDung.DTO.ActivePostByAdminDTO;
+import com.doan.AppTuyenDung.DTO.BanPostByAdminDTO;
+import com.doan.AppTuyenDung.DTO.CreatePostEmployerCompany.PostDTO;
+import com.doan.AppTuyenDung.DTO.DetailPostDTO;
+import com.doan.AppTuyenDung.DTO.GetAllPostRuleAdminDTO;
+import com.doan.AppTuyenDung.DTO.InfoPostDetailDto;
+import com.doan.AppTuyenDung.DTO.NoteDTO;
+import com.doan.AppTuyenDung.DTO.PostFilterDTO;
+import com.doan.AppTuyenDung.DTO.Response.PostJobTypeCountDTO;
+import com.doan.AppTuyenDung.DTO.Response.PostResponse;
+import com.doan.AppTuyenDung.DTO.ReupPostDTO;
+import com.doan.AppTuyenDung.DTO.UpdatePostDTO;
+import com.doan.AppTuyenDung.Mapper.PostMapper;
 import com.doan.AppTuyenDung.Repositories.AccountRepository;
-import com.doan.AppTuyenDung.Repositories.CompanyRepository;
-import com.doan.AppTuyenDung.Repositories.DetailPostRepository;
-import com.doan.AppTuyenDung.Repositories.NoteReponsitory;
-import com.doan.AppTuyenDung.Repositories.PostRepositoriesQuery;
-import com.doan.AppTuyenDung.Repositories.PostRepository;
-import com.doan.AppTuyenDung.Repositories.UserRepository;
-
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeExpTypeRepository;
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeGenderPostRepository;
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeJobLevelRepository;
@@ -33,17 +43,13 @@ import com.doan.AppTuyenDung.Repositories.AllCode.CodePostStatusRepository;
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeProvinceRepository;
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeSalaryTypeRepository;
 import com.doan.AppTuyenDung.Repositories.AllCode.CodeWorkTypeRepository;
+import com.doan.AppTuyenDung.Repositories.CompanyRepository;
+import com.doan.AppTuyenDung.Repositories.DetailPostRepository;
+import com.doan.AppTuyenDung.Repositories.NoteReponsitory;
+import com.doan.AppTuyenDung.Repositories.PostRepositoriesQuery;
+import com.doan.AppTuyenDung.Repositories.PostRepository;
 import com.doan.AppTuyenDung.Repositories.Specification.PostSpecification;
-
-import java.util.stream.Collectors;
-
-import com.doan.AppTuyenDung.DTO.AcceptPostByAdminDTO;
-import com.doan.AppTuyenDung.DTO.ActivePostByAdminDTO;
-import com.doan.AppTuyenDung.DTO.BanPostByAdminDTO;
-import com.doan.AppTuyenDung.DTO.DetailPostDTO;
-import com.doan.AppTuyenDung.DTO.GetAllPostRuleAdminDTO;
-import com.doan.AppTuyenDung.DTO.Response.PostJobTypeCountDTO;
-import com.doan.AppTuyenDung.DTO.Response.PostResponse;
+import com.doan.AppTuyenDung.Repositories.UserRepository;
 import com.doan.AppTuyenDung.entity.CodeExpType;
 import com.doan.AppTuyenDung.entity.CodeGenderPost;
 import com.doan.AppTuyenDung.entity.CodeJobLevel;
@@ -57,15 +63,6 @@ import com.doan.AppTuyenDung.entity.DetailPost;
 import com.doan.AppTuyenDung.entity.Note;
 import com.doan.AppTuyenDung.entity.Post;
 import com.doan.AppTuyenDung.entity.User;
-import com.doan.AppTuyenDung.Mapper.PostMapper;
-import com.doan.AppTuyenDung.DTO.InfoPostDetailDto;
-import com.doan.AppTuyenDung.DTO.NoteDTO;
-import com.doan.AppTuyenDung.DTO.PostFilterDTO;
-import com.doan.AppTuyenDung.DTO.ReupPostDTO;
-import com.doan.AppTuyenDung.DTO.UpdatePostDTO;
-import com.doan.AppTuyenDung.DTO.CreatePostEmployerCompany.PostDTO;
-
-import java.util.*;
 
 @Service
 public class postService {
@@ -447,8 +444,8 @@ public class postService {
                             ? "Duyệt bài thành công"
                             : "Bài viết #" + foundPost.getId() + " của bạn đã bị từ chối";
                     String emailLink = "PS1".equals(data.getStatusCode())
-                            ? "http://localhost:3000/admin/detail-job/" + foundPost.getId()
-                            : "http://localhost:3000/admin/list-post/" + foundPost.getId();
+                            ? "https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/detail-job/" + foundPost.getId()
+                            : "https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/list-post/" + foundPost.getId();
                     emailService.sendSimpleEmail(user1.getEmail(), emailSubject, emailLink);
                     
                 }
@@ -510,7 +507,7 @@ public class postService {
                     String emailContent = String.format("Bài viết #%d của bạn đã bị chặn vì %s.\n" +
                                         "Bạn có thể xem chi tiết tại: %s",
                                         foundPost.getId(), data.getNote(), 
-                                        String.format("http://localhost:3000/admin/list-post/%d", foundPost.getId()));
+                                        String.format("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/list-post/%d", foundPost.getId()));
                     emailService.sendSimpleEmail(user.getEmail(), emailSubject, emailContent);
                 }
 
@@ -569,7 +566,7 @@ public class postService {
                     String emailContent = String.format("Bài viết #%d của bạn đã được mở lại vì: %s.\n" +
                                                         "Bạn có thể xem chi tiết tại: %s",
                                                         foundPost.getId(), data.getNote(), 
-                                                        String.format("http://localhost:3000/admin/list-post/%d", foundPost.getId()));
+                                                        String.format("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/list-post/%d", foundPost.getId()));
 
                     // Send email notification
                     emailService.sendSimpleEmail(user.getEmail(), emailSubject, emailContent);

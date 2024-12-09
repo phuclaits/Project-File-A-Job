@@ -7,8 +7,8 @@ import {
 import { getDetailCompanyById } from "../../../service/userService";
 import ReactPaginate from "react-paginate";
 import { PAGINATION } from "../../utils/constant";
-import { toast } from "react-toastify"; 
-import "./ApplicationListNew.css"; 
+import { toast } from "react-toastify";
+import "./ApplicationListNew.css";
 import { getPhoneByUserId } from "../../../apiCall/user";
 import { sendUserNotification } from "../../../apiCall/message";
 import axios from "axios";
@@ -58,12 +58,12 @@ const ApplicationListNew = () => {
   const handleSendNotification = async (userId, status) => {
     try {
       const phoneNumber = await getPhoneByUserId(userId);
-      const userData = localStorage.getItem("userData"); 
+      const userData = localStorage.getItem("userData");
       const userObject = JSON.parse(userData);
       const response = await getDetailCompanyById(userObject.idCompany);
       let subject = "";
       let message = "";
-  
+
       switch (status) {
         case "accepted":
           subject = `${response.result?.name} đã chấp nhận CV của bạn!`;
@@ -81,24 +81,24 @@ const ApplicationListNew = () => {
           subject = "Trạng thái không xác định.";
           message = "Vui lòng kiểm tra lại trạng thái hồ sơ.";
       }
-  
+
       const payload = {
         subject: subject,
         image: response.result?.thumbnail,
         message: message,
         attachedUrl: "/home",
         sender: "ADMIN",
-        userId:  [phoneNumber.result],
+        userId: [phoneNumber.result],
       };
-      
-      console.log("payload:", payload); 
+
+      console.log("payload:", payload);
       const notificationResponse = await sendUserNotification(payload);
-      console.log("API response:", notificationResponse); 
+      console.log("API response:", notificationResponse);
     } catch (error) {
       console.error("Error sending notification:", error);
     }
   };
-  
+
   const handlePageClick = (event) => {
     setPage(event.selected);
   };
@@ -111,16 +111,16 @@ const ApplicationListNew = () => {
     try {
       let res = await reviewCVService(cvId.id);
       if (res) {
-        handleSendNotification(cvId.userId,"reviewed")
-        fetchPendingCVs(page); 
-        notifyReviewSuccess(); 
+        handleSendNotification(cvId.userId, "reviewed");
+        fetchPendingCVs(page);
+        notifyReviewSuccess();
       } else {
         console.log(res.errMessage);
-        notifyReviewError(); 
+        notifyReviewError();
       }
     } catch (error) {
       console.log(error);
-      notifyReviewError(); 
+      notifyReviewError();
     }
   };
 
@@ -134,7 +134,7 @@ const ApplicationListNew = () => {
     try {
       let res = await acceptCVService(cvId.id);
       if (res) {
-        handleSendNotification(cvId.userId,"accepted")
+        handleSendNotification(cvId.userId, "accepted");
         fetchPendingCVs(page); // Refresh the list
         notifyAcceptSuccess(); // Thông báo toast accept thành công
       } else {
@@ -157,7 +157,7 @@ const ApplicationListNew = () => {
     try {
       let res = await rejectCVService(cvId.id);
       if (res) {
-        handleSendNotification(cvId.userId,"rejected")
+        handleSendNotification(cvId.userId, "rejected");
         fetchPendingCVs(page); // Refresh the list
         notifyRejectSuccess(); // Thông báo toast reject thành công
       } else {
@@ -185,73 +185,85 @@ const ApplicationListNew = () => {
           </tr>
         </thead>
         <tbody>
-          { dataCv.filter((cv) => cv !== null).length > 0 ? (
-            dataCv.filter((cv) => cv !== null).map((cv, index) => (
-            <tr key={index}>
-              <td>{cv.userId || ""}</td>
-              <td>{`${cv.firstName || ""} ${cv.lastName || ""}`}</td>
-              <td>{cv.email || ""}</td>
-              <td>{cv.postId || ""}</td>
-              <td className="middle-buttonstatus">
-                <label className="badge badge-warning">{cv.status || ""}</label>
-              </td>
-              <td>
-              <button
-              className="btn-view"
-              style={{ color: "#4B49AC" }}
-              onClick={() => history.push(`/admin/list-cv/${cv.postId}/`)}
-            >
-              Xem CV nộp
-            </button>
-            &nbsp; &nbsp;
-                <button
-                  className="btn-review"
-                  onClick={() => handleReview(cv)}
-                >
-                  Duyệt
-                </button>
-                <button
-                  className="btn-accept"
-                  onClick={() => handleAccept(cv)}
-                >
-                  Chấp nhận
-                </button>
-                <button
-                  className="btn-reject"
-                  onClick={() => handleReject(cv)}
-                >
-                  Từ chối
-                </button>
+          {dataCv.filter((cv) => cv !== null).length > 0 ? (
+            dataCv
+              .filter((cv) => cv !== null)
+              .map((cv, index) => (
+                <tr key={index}>
+                  <td>{cv.userId || ""}</td>
+                  <td>{`${cv.firstName || ""} ${cv.lastName || ""}`}</td>
+                  <td>{cv.email || ""}</td>
+                  <td>{cv.postId || ""}</td>
+                  <td className="middle-buttonstatus">
+                    <label className="badge badge-warning">
+                      {cv.status || ""}
+                    </label>
+                  </td>
+                  <td>
+                    <button
+                      className="btn-view"
+                      style={{ color: "#4B49AC" }}
+                      onClick={() =>
+                        history.push(`/admin/list-cv/${cv.postId}/`)
+                      }
+                    >
+                      Xem CV nộp
+                    </button>
+                    &nbsp; &nbsp;
+                    <button
+                      className="btn-review"
+                      onClick={() => handleReview(cv)}
+                    >
+                      Duyệt
+                    </button>
+                    <button
+                      className="btn-accept"
+                      onClick={() => handleAccept(cv)}
+                    >
+                      Chấp nhận
+                    </button>
+                    <button
+                      className="btn-reject"
+                      onClick={() => handleReject(cv)}
+                    >
+                      Từ chối
+                    </button>
+                  </td>
+                </tr>
+              ))
+          ) : (
+            <tr>
+              <td colSpan="7" style={{ textAlign: "center" }}>
+                <p>
+                  Không có ứng viên nào được chấp nhận. Tìm kiếm ứng viên{" "}
+                  <a href="https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/list-candiate/">
+                    Tại đây!
+                  </a>
+                </p>
               </td>
             </tr>
-          ))) : (
-    <tr>
-      <td colSpan="7" style={{ textAlign: "center" }}>
-        <p>Không có ứng viên nào được chấp nhận. Tìm kiếm ứng viên <a href='http://localhost:3000/admin/list-candiate/'>Tại đây!</a></p>
-      </td>
-    </tr>
-  )}
+          )}
         </tbody>
       </table>
       <ReactPaginate
-                        forcePage={page}
-                        previousLabel={'Quay lại'}
-                        nextLabel={'Tiếp'}
-                        breakLabel={'...'}
-                        pageCount={count}
-                        marginPagesDisplayed={3}
-                        containerClassName={"pagination justify-content-center pb-3"}
-                        pageClassName={"page-item"}
-                        pageLinkClassName={"page-link"}
-                        previousLinkClassName={"page-link"}
-                        previousClassName={"page-item"}
-                        nextClassName={"page-item"}
-                        nextLinkClassName={"page-link"}
-                        breakLinkClassName={"page-link"}
-                        breakClassName={"page-item"}
-                        activeClassName={"active"}
-                        onPageChange={handlePageClick}
-                    />
+        forcePage={page}
+        previousLabel={"Quay lại"}
+        nextLabel={"Tiếp"}
+        breakLabel={"..."}
+        pageCount={count}
+        marginPagesDisplayed={3}
+        containerClassName={"pagination justify-content-center pb-3"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+        breakLinkClassName={"page-link"}
+        breakClassName={"page-item"}
+        activeClassName={"active"}
+        onPageChange={handlePageClick}
+      />
     </div>
   );
 };
