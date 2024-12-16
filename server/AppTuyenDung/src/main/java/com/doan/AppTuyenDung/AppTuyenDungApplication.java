@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableJpaRepositories(basePackages = "com.doan.AppTuyenDung")
 public class AppTuyenDungApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(AppTuyenDungApplication.class, args);
 	}

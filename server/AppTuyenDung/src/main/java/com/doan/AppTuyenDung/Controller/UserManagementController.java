@@ -127,13 +127,6 @@ public class UserManagementController {
             apiRS.setCode(-1);
             apiRS.setMessage("Lỗi không tìm thấy account");
         }
-        // if(account.getId() != data.getIdUser())
-        // {
-        //     apiRS.setCode(-1);
-        //     apiRS.setMessage("Không thể cập nhật thông tin người dùng");
-        //     return apiRS;
-        // }
-
         try{
             String base64Pdf = Base64.getEncoder().encodeToString(filepdf.getBytes());
             String result = "data:application/pdf;base64," + base64Pdf;
@@ -317,6 +310,21 @@ public class UserManagementController {
         Map<String, Object> result = usersManagementService.handleForgotPasswordMobile(phoneNumber);
         return ResponseEntity.ok(result);
     }
-    //"{"phoneNumber":"0374852925"}"
+    
+    @PostMapping("/user/ban-user")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<Map<String, Object>> BanUserByRuleAdmin(@RequestBody Map<String, Integer> requestData) {
+        Integer userId = requestData.get("userId");
+        Map<String, Object> result = usersManagementService.BanUserByRuleAdmin(userId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/user/unban-user")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<Map<String, Object>> UnBanUserByRuleAdmin(@RequestBody Map<String, Integer> requestData) {
+        Integer userId = requestData.get("userId");
+        Map<String, Object> result = usersManagementService.UnBanUserByRuleAdmin(userId);
+        return ResponseEntity.ok(result);
+    }
     
 }

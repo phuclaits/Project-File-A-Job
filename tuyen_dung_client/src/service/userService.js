@@ -140,7 +140,6 @@ const getDetailCompanyByUserId = (userId, companyId) => {
 };
 const createCompanyService = async (formData) => {
   try {
-    console.log(formData);
     let response = await axios.post(
       "http://localhost:8080/app-tuyen-dung/api/v1/company/create-company",
       formData
@@ -316,18 +315,14 @@ const getDetailExpTypeByCode = (code) => {
 
 
 const BanUserService = (userId) => {
-  return axios.post(`/api/ban-user`, {
-    data: {
-      id: userId,
-    },
+  return axios.post(`http://localhost:8080/app-tuyen-dung/api/v1/user/ban-user`, {
+    userId: userId
   });
 };
 
 const UnbanUserService = (userId) => {
-  return axios.post(`/api/unban-user`, {
-    data: {
-      id: userId,
-    },
+  return axios.post(`http://localhost:8080/app-tuyen-dung/api/v1/user/unban-user`, {
+    userId: userId
   });
 };
 

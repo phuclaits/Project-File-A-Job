@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,16 @@ import com.doan.AppTuyenDung.DTO.Response.PostJobTypeCountDTO;
 import com.doan.AppTuyenDung.DTO.Response.PostResponse;
 import com.doan.AppTuyenDung.Exception.AppException;
 import com.doan.AppTuyenDung.Exception.ErrorCode;
+import com.doan.AppTuyenDung.Repositories.AccountRepository;
+import com.doan.AppTuyenDung.Repositories.AllCode.CodeStatusRepository;
+import com.doan.AppTuyenDung.Repositories.CompanyRepository;
 import com.doan.AppTuyenDung.Repositories.NoteReponsitory;
+import com.doan.AppTuyenDung.Repositories.UserRepository;
 import com.doan.AppTuyenDung.Services.postService;
+import com.doan.AppTuyenDung.entity.Account;
+import com.doan.AppTuyenDung.entity.CodeStatus;
+import com.doan.AppTuyenDung.entity.Company;
+import com.doan.AppTuyenDung.entity.User;
 
 
 
@@ -50,7 +59,14 @@ public class postController {
     @Autowired
     private postService postService;
     @Autowired ModelMapper modelMapper;
-
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private CodeStatusRepository codeStatusRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
     @GetMapping("/get-filter-post")
     public ResponseEntity<Page<DetailPostDTO>> getFilteredDetailPosts(@RequestParam(required = false) String categoryJobCode,
                                                               @RequestParam(required = false) String addressCode,
@@ -174,7 +190,26 @@ public class postController {
     @PostMapping("/create-new-post")
     @PreAuthorize("hasAnyAuthority('COMPANY','EMPLOYER')")
     public ResponseEntity<Map<String, Object>> HandleCreateNewPost(@RequestBody PostDTO data) {
+        Account findAccount = accountRepository.findByUserId(data.getUserId());
+        CodeStatus codeStatusS2 = codeStatusRepository.findByCode("S2");
+        if(findAccount.getStatusCode() == codeStatusS2)
+        {
+            Map<String, Object> response1 = new HashMap<>();
+            response1.put("errCode", 2);
+            response1.put("errMessage", "Tài khoản bạn đang tạm bị khoá, vui lòng liên hệ với quản trị viên lahoangphuc03@gmail.com");
+            return ResponseEntity.ok(response1);
+        }
         
+        Optional<User> user = userRepository.findById(data.getUserId());
+        int idCompany = user.get().getCompanyId();
+        Optional<Company> company = companyRepository.findById(idCompany);
+        if(!company.isPresent() || company.get().getStatusCode().equals(codeStatusS2))
+        {
+            Map<String, Object> response1 = new HashMap<>();
+            response1.put("errCode", 2);
+            response1.put("errMessage", "Công ty đang tạm bị đình chỉ, vui lòng liên hệ với quản trị viên lahoangphuc03@gmail.com");
+            return ResponseEntity.ok(response1);
+        }
         Map<String, Object> response = postService.CreateNewPost(data);
         return ResponseEntity.ok(response);
     }

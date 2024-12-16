@@ -438,8 +438,8 @@ public class CompanyService {
                 accountRepository.save(accountOpt);
 
                 response.put("errCode", 0);
-                response.put("errMessage", "Đã tạo công ty thành công");
-                response.put("company", savedCompany);  // Trả về đối tượng Company vừa tạo
+                response.put("errMessage", "Đã tạo công ty thành công, Vui lòng chờ admin phê duyệt");
+                response.put("company", savedCompany);  
             } else {
                 response.put("errCode", 2);
                 response.put("errMessage", "Không tìm thấy người dùng");

@@ -120,7 +120,15 @@ const Register = () => {
       });
       return;
     }
-
+    
+    if (!inputValues.againPass) {
+      toast.error("Mật khẩu nhập lại không được bỏ trống!");
+      return;
+    }
+    if(inputValues.password.length <= 6){
+      toast.error("Mật khẩu phải lớn hơn 5 ký tự !");
+      return;
+    }
     if (inputValues.againPass !== inputValues.password) {
       toast.error("Mật khẩu nhập lại không trùng khớp!");
       return;
@@ -134,7 +142,7 @@ const Register = () => {
         }
       )
       .then((res) => {
-        console.log(res);
+
         if (res.data === true) {
           toast.error("Số điện thoại đã tồn tại !");
         } else {

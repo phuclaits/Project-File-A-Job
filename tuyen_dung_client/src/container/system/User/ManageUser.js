@@ -55,20 +55,23 @@ const ManageUser = () => {
         }
     }
     let handlebanUser = async (event, item) => {
+        let userid = item.id;
         event.preventDefault();
             let res = {}
             if (item.statusCode== 'S1')
             {
-                res = await BanUserService(item.userAccountData.id)
+                res = await BanUserService(userid)
             }
             else {
-                res = await UnbanUserService(item.userAccountData.id)
+                res = await UnbanUserService(userid)
             }
+            console.log(res);
             if (res && res.errCode === 0) {
                 toast.success(res.errMessage)
                 let user = await getAllUsers({
                     limit: PAGINATION.pagerow,
-                    offset: numberPage * PAGINATION.pagerow
+                    offset: numberPage,
+                    search: ""
                 })
                 if (user && user.errCode === 0) {
     

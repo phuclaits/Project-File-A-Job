@@ -165,7 +165,7 @@ const AddCompany = () => {
                         toast.success("Tạo mới công ty thành công")
                         fetchCompany(user.id)
                         let userData = JSON.parse(localStorage.getItem("userData"))
-                        let newUser = { ...userData, codeRoleAccount: "COMPANY", idCompany: res.companyId }
+                        let newUser = { ...userData, codeRoleAccount: "COMPANY",idCompany: res.companyId }
                         localStorage.setItem("userData", JSON.stringify(newUser))
                         setTimeout(() => {
                             window.location.reload()

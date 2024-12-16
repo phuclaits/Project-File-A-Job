@@ -92,8 +92,8 @@ public class PaymentService {
             payer.setPaymentMethod("paypal");
 
             RedirectUrls redirectUrls = new RedirectUrls();
-            redirectUrls.setReturnUrl("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app" + "/admin/payment/success");
-            redirectUrls.setCancelUrl("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app" + "/admin/payment/cancel");
+            redirectUrls.setReturnUrl("http://localhost:3000" + "/admin/payment/success");
+            redirectUrls.setCancelUrl("http://localhost:3000" + "/admin/payment/cancel");
 
             Payment payment = new Payment();
             payment.setIntent("sale");
@@ -257,8 +257,8 @@ public class PaymentService {
             payer.setPaymentMethod("paypal");
 
             RedirectUrls redirectUrls = new RedirectUrls();
-            redirectUrls.setReturnUrl("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app" + "/admin/paymentCv/success");
-            redirectUrls.setCancelUrl("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app" + "/admin/paymentCv/cancel");
+            redirectUrls.setReturnUrl("http://localhost:3000" + "/admin/paymentCv/success");
+            redirectUrls.setCancelUrl("http://localhost:3000" + "/admin/paymentCv/cancel");
 
             Payment payment = new Payment();
             payment.setIntent("sale");

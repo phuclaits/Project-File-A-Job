@@ -34,6 +34,7 @@ import com.doan.AppTuyenDung.entity.CodeProvince;
 import com.doan.AppTuyenDung.entity.CodeRule;
 import com.doan.AppTuyenDung.entity.CodeSalaryType;
 import com.doan.AppTuyenDung.entity.CodeStatus;
+import com.doan.AppTuyenDung.entity.Company;
 
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +107,7 @@ public class UserManagermentService {
     private CodeStatusRepository codeStatusRepository;
     @Autowired
     private EmailService emailService;
+
 	public ReqRes register(ReqRes registrationRequest) {
 		ReqRes resp = new ReqRes();
 
@@ -661,4 +663,58 @@ public class UserManagermentService {
             return response;
         }
     }
+
+
+    public Map<String, Object> BanUserByRuleAdmin(Integer userId) {
+        Map<String, Object> response = new HashMap<>();
+
+        if (userId == null) {
+            response.put("errCode", 1);
+            response.put("errMessage", "Missing required parameters!");
+            return response;
+        }
+
+        Account foundAccount = accountRepo.findByUserId(userId);
+        if (foundAccount != null) {
+            
+            CodeStatus codeStatusS2 = codeStatusRepository.findByCode("S2");
+            foundAccount.setStatusCode(codeStatusS2);
+            accountRepo.save(foundAccount);
+
+            response.put("errCode", 0);
+            response.put("errMessage", "Đã dừng hoạt động của tài khoản");
+        } else {
+            response.put("errCode", 2);
+            response.put("errMessage", "Tài khoản không tồn tại");
+        }
+
+        return response;
+    }
+
+
+    public Map<String, Object> UnBanUserByRuleAdmin(Integer userId) {
+        Map<String, Object> response = new HashMap<>();
+
+        if (userId == null) {
+            response.put("errCode", 1);
+            response.put("errMessage", "Missing required parameters!");
+            return response;
+        }
+
+        Account foundAccount = accountRepo.findByUserId(userId);
+        if (foundAccount!=null) {
+            CodeStatus codeStatus = codeStatusRepository.findByCode("S1");
+            foundAccount.setStatusCode(codeStatus);
+            accountRepo.save(foundAccount);
+
+            response.put("errCode", 0);
+            response.put("errMessage", "Đã mở hoạt động của tài khoản");
+        } else {
+            response.put("errCode", 2);
+            response.put("errMessage", "Tài khoản không tồn tại");
+        }
+
+        return response;
+    }
+
 }

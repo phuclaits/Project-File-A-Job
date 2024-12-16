@@ -444,8 +444,8 @@ public class postService {
                             ? "Duyệt bài thành công"
                             : "Bài viết #" + foundPost.getId() + " của bạn đã bị từ chối";
                     String emailLink = "PS1".equals(data.getStatusCode())
-                            ? "https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/detail-job/" + foundPost.getId()
-                            : "https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/list-post/" + foundPost.getId();
+                            ? "http://localhost:3000//admin/detail-job/" + foundPost.getId()
+                            : "http://localhost:3000//admin/list-post/" + foundPost.getId();
                     emailService.sendSimpleEmail(user1.getEmail(), emailSubject, emailLink);
                     
                 }
@@ -507,7 +507,7 @@ public class postService {
                     String emailContent = String.format("Bài viết #%d của bạn đã bị chặn vì %s.\n" +
                                         "Bạn có thể xem chi tiết tại: %s",
                                         foundPost.getId(), data.getNote(), 
-                                        String.format("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/list-post/%d", foundPost.getId()));
+                                        String.format("http://localhost:3000/admin/list-post/%d", foundPost.getId()));
                     emailService.sendSimpleEmail(user.getEmail(), emailSubject, emailContent);
                 }
 
@@ -566,7 +566,7 @@ public class postService {
                     String emailContent = String.format("Bài viết #%d của bạn đã được mở lại vì: %s.\n" +
                                                         "Bạn có thể xem chi tiết tại: %s",
                                                         foundPost.getId(), data.getNote(), 
-                                                        String.format("https://project-file-a-job-git-master-la-hoang-phucs-projects.vercel.app/admin/list-post/%d", foundPost.getId()));
+                                                        String.format("http://localhost:3000/admin/list-post/%d", foundPost.getId()));
 
                     // Send email notification
                     emailService.sendSimpleEmail(user.getEmail(), emailSubject, emailContent);

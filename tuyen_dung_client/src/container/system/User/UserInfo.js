@@ -111,7 +111,6 @@ const UserInfo = () => {
             return;
         }
         let formData = new FormData();
-        console.log("123");
         // Append the fields to the FormData object
         formData.append('id', inputValues.id);
         formData.append('firstName', inputValues.firstName);
