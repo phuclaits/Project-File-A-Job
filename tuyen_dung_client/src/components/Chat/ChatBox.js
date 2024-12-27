@@ -16,10 +16,6 @@ const ChatBox = ({ user, onBack, onClose }) => {
     }
   };
 
-  const addEmoji = (emoji) => {
-    setInput((prev) => prev + emoji.native);
-  };
-
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between bg-blue-500 text-white p-3">
