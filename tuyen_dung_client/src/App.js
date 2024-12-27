@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./container/header/header";
 import Footer from "./container/footer/Footer";
 import Home from "./container/home/home";
@@ -22,8 +22,18 @@ import ForgetPassword from "./container/login/ForgetPassword";
 import JobDetail from "./container/JobDetail/JobDetail";
 import ListCompany from "./container/Company/ListCompany";
 import DetailCompany from "./container/Company/DetailCompany";
+import UserList from "./components/Chat/UserList";
+import ChatBox from "./components/Chat/ChatBox";
+import { MessageCircleMore } from "lucide-react";
 // import HomeCandidate from "./container/Candidate/HomeCandidate";
 function App() {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+  };
+
   return (
     <Router>
       <Switch>
@@ -67,12 +77,12 @@ function App() {
             render={() => {
               if (
                 JSON.parse(localStorage.getItem("userData")) &&
-                (JSON.parse(localStorage.getItem("userData")).codeRoleAccount ===
-                  "ADMIN" ||
-                  JSON.parse(localStorage.getItem("userData")).codeRoleAccount ===
-                  "EMPLOYER" ||
-                  JSON.parse(localStorage.getItem("userData")).codeRoleAccount ===
-                  "COMPANY")
+                (JSON.parse(localStorage.getItem("userData"))
+                  .codeRoleAccount === "ADMIN" ||
+                  JSON.parse(localStorage.getItem("userData"))
+                    .codeRoleAccount === "EMPLOYER" ||
+                  JSON.parse(localStorage.getItem("userData"))
+                    .codeRoleAccount === "COMPANY")
               ) {
                 return <HomeAdmin />;
               } else {
@@ -86,7 +96,7 @@ function App() {
               if (
                 JSON.parse(localStorage.getItem("userData")) &&
                 JSON.parse(localStorage.getItem("userData")).codeRoleAccount ===
-                "CANDIDATE"
+                  "CANDIDATE"
               ) {
                 return (
                   <>
@@ -135,6 +145,35 @@ function App() {
             draggable
             pauseOnHover
           />
+          <div className="relative h-screen">
+            {!isChatOpen && (
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className="fixed bottom-5 right-5 bg-blue-500 text-white p-3 rounded-full shadow-lg"
+              >
+                <MessageCircleMore size={24} />
+              </button>
+            )}
+            {isChatOpen && (
+              <div className="fixed bottom-5 right-5 w-96 h-50 bg-white">
+                {!selectedUser ? (
+                  <UserList
+                    onUserSelect={handleUserSelect}
+                    onClose={() => setIsChatOpen(false)}
+                  />
+                ) : (
+                  <ChatBox
+                    user={selectedUser}
+                    onBack={() => setSelectedUser(null)}
+                    onClose={() => {
+                      setSelectedUser(null);
+                      setIsChatOpen(false);
+                    }}
+                  />
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </Switch>
     </Router>
